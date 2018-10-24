@@ -1,13 +1,12 @@
 pragma solidity ^0.4.23;
 
 import "./StandardToken.sol";
-import "./Ownable.sol";
 
 
 /**
  * @title CappedMintableToken token
  */
-contract CappedMintableToken is StandardToken, Ownable {
+contract CappedMintableToken is StandardToken {
   event Mint(address indexed to, uint256 amount);
   event MintFinished();
   event MintingAgentChanged(address addr, bool state);

@@ -2,6 +2,7 @@ pragma solidity ^0.4.23;
 
 
 import "./ERC20Basic.sol";
+import "./Ownable.sol";
 import "./SafeMath.sol";
 
 
@@ -9,12 +10,23 @@ import "./SafeMath.sol";
  * @title Basic token
  * @dev Basic version of StandardToken, with no allowances.
  */
-contract BasicToken is ERC20Basic {
+contract BasicToken is ERC20Basic, Ownable {
   using SafeMath for uint256;
 
   mapping(address => uint256) balances;
 
   uint256 totalSupply_;
+  
+  bool public stopped = false;
+  
+  event Stop(address indexed from);
+  
+  event Start(address indexed from);
+  
+  modifier isRunning {
+    assert (!stopped);
+    _;
+  }
 
   /**
   * @dev total number of tokens in existence
@@ -28,7 +40,7 @@ contract BasicToken is ERC20Basic {
   * @param _to The address to transfer to.
   * @param _value The amount to be transferred.
   */
-  function transfer(address _to, uint256 _value) public returns (bool) {
+  function transfer(address _to, uint256 _value) isRunning public returns (bool) {
     require(_to != address(0));
     require(_value <= balances[msg.sender]);
 
@@ -45,6 +57,16 @@ contract BasicToken is ERC20Basic {
   */
   function balanceOf(address _owner) public view returns (uint256 ownerBalance) {
     return balances[_owner];
+  }
+  
+  function stop() onlyOwner public {
+    stopped = true;
+    emit Stop(msg.sender);
+  }
+
+  function start() onlyOwner public {
+    stopped = false;
+    emit Start(msg.sender);
   }
 
 }
