@@ -50,7 +50,7 @@ contract CappedMintableToken is StandardToken {
    * @param _amount The amount of tokens to mint.
    * @return A boolean that indicates if the operation was successful.
    */
-  function mint(address _to, uint256 _amount) onlyMintAgent canMint public returns (bool) {
+  function mint(address _to, uint256 _amount) onlyMintAgent canMint isRunning public returns (bool) {
     require(totalSupply_.add(_amount) <= cap);
     totalSupply_ = totalSupply_.add(_amount);
     balances[_to] = balances[_to].add(_amount);
