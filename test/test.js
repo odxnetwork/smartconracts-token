@@ -324,4 +324,31 @@ contract('ODXToken Contract', function (accounts) {
       
     });
   });
+  
+  describe('stop/start', function () {
+    describe('called by non-owner', function () {
+      it('reverts', async function () {
+        await this.token.stop({ from: otherAccount }).should.be.rejected;
+        await this.token.start({ from: otherAccount }).should.be.rejected;
+      });
+    });
+    describe('called owner', function () {
+      it('reverts', async function () {
+        await this.token.stop({ from: owner });
+        await this.token.mint(otherAccount, amount, { from: owner }).should.be.rejected;
+        await this.token.start({ from: owner });
+        await this.token.mint(otherAccount, amount, { from: owner });
+      });
+    });
+    describe('reject transfer', function () {
+      it('reverts', async function () {
+        await this.token.mint(otherAccount, amount, { from: owner });
+        await this.token.stop({ from: owner });
+        await this.token.transfer(anotherAccount, amount, { from:otherAccount }).should.be.rejected;
+        await this.token.start({ from: owner });
+        await this.token.transfer(anotherAccount, amount, { from:otherAccount });
+      });
+    });
+  });
+
 });
